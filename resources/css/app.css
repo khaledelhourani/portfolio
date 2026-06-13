@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    /* Shared accents (identical in both themes) + dark defaults */
+    :root,
+    .dark {
+        --c-bg: 13 17 23;
+        --c-card: 22 27 34;
+        --c-elevated: 28 33 40;
+        --c-border: 48 54 61;
+        --c-tag: 33 38 45;
+        --c-text: 230 237 243;
+        --c-muted: 139 148 158;
+        --c-link: 88 166 255;
+        --c-cyan: 0 217 245;
+        --c-purple: 168 85 247;
+        --c-green: 0 255 136;
+        --c-orange: 255 107 53;
+        color-scheme: dark;
+    }
+
+    .light {
+        --c-bg: 255 255 255;
+        --c-card: 246 248 250;
+        --c-elevated: 234 238 242;
+        --c-border: 208 215 222;
+        --c-tag: 221 244 255;
+        --c-text: 28 33 40;
+        --c-muted: 87 96 106;
+        --c-link: 9 105 218;
+        color-scheme: light;
+    }
+
+    body {
+        @apply bg-base-bg text-ink antialiased;
+        font-family: 'Cairo', 'Inter', sans-serif;
+    }
+
+    /* English uses a Latin stack; Arabic stays on Cairo */
+    html[lang='en'] body {
+        font-family: 'Inter', 'Space Grotesk', sans-serif;
+    }
+    .font-display {
+        font-family: 'Cairo', sans-serif;
+    }
+    html[lang='en'] .font-display {
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Smooth dark/light transition (colours only — never transforms) */
+    *,
+    *::before,
+    *::after {
+        transition-property: background-color, border-color, color, fill, stroke;
+        transition-duration: 300ms;
+        transition-timing-function: ease;
+    }
+
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+        background: rgb(var(--c-border));
+        border-radius: 9999px;
+        border: 2px solid rgb(var(--c-bg));
+    }
+}
+
+@layer components {
+    .glass-card {
+        @apply relative rounded-2xl border border-base-border bg-base-card/70 backdrop-blur-xl shadow-card;
+    }
+    .glass-card::before {
+        content: '';
+        @apply pointer-events-none absolute inset-0 rounded-2xl opacity-60;
+        background: radial-gradient(120% 120% at 0% 0%, rgba(0, 217, 245, 0.06), transparent 45%),
+            radial-gradient(120% 120% at 100% 0%, rgba(168, 85, 247, 0.06), transparent 45%);
+    }
+
+    .nav-pill {
+        @apply relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-muted transition-all duration-200 hover:bg-ink/5 hover:text-ink;
+    }
+    .nav-pill.is-active {
+        @apply bg-accent-cyan/10 text-ink;
+        box-shadow: inset 0 0 0 1px rgba(0, 217, 245, 0.3);
+    }
+    .nav-pill.is-active::before {
+        content: '';
+        @apply absolute bottom-2 top-2 w-[3px] rounded-full bg-accent-cyan;
+        inset-inline-start: 0;
+    }
+
+    .chip {
+        @apply inline-flex items-center gap-1 rounded-md bg-base-tag px-2 py-0.5 text-xs font-medium text-ink-link;
+        font-family: theme('fontFamily.mono');
+    }
+
+    .btn-cyan {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-accent-cyan px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:brightness-110 hover:shadow-glow active:scale-[0.98];
+        color: #07131a; /* fixed dark for contrast in both themes */
+    }
+    .btn-outline {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-base-border bg-transparent px-4 py-2.5 text-sm font-semibold text-ink transition-all duration-200 hover:border-ink-muted hover:bg-ink/5 active:scale-[0.98];
+    }
+
+    .live-dot {
+        @apply inline-block h-2 w-2 rounded-full bg-accent-success animate-pulse-dot;
+        box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+    }
+
+    /* Square icon row-actions for admin lists (edit / delete) — matches the
+       projects table action buttons. Icon-only; use a title attr for a label. */
+    .btn-action {
+        @apply grid h-8 w-8 place-items-center rounded-lg text-ink-muted transition duration-200 hover:bg-ink/5 hover:text-ink active:scale-[0.96];
+    }
+    .btn-action svg { @apply h-4 w-4; }
+    .btn-action-edit { @apply hover:bg-accent-cyan/10 hover:text-accent-cyan; }
+    .btn-action-danger { @apply hover:bg-red-500/10 hover:text-red-300; }
+
+    /* Rendered markdown article (blog post body) */
+    .article { @apply text-[15px] leading-8; color: rgb(var(--c-text) / 0.9); }
+    .article h1, .article h2, .article h3 { @apply mt-8 mb-3 font-display font-bold text-ink; }
+    .article h1 { @apply text-2xl; }
+    .article h2 { @apply text-xl; }
+    .article h3 { @apply text-lg; }
+    .article p { @apply my-4; }
+    .article a { @apply text-accent-cyan hover:underline; }
+    .article ul { @apply my-4 list-disc space-y-1.5 ps-6; }
+    .article ol { @apply my-4 list-decimal space-y-1.5 ps-6; }
+    .article blockquote { @apply my-4 border-s-4 border-accent-cyan/50 bg-base-card/50 px-4 py-2 text-ink-muted; }
+    .article code { @apply rounded bg-base-tag px-1.5 py-0.5 font-mono text-sm text-ink-link; }
+    .article pre { @apply my-4 overflow-x-auto rounded-xl border border-base-border bg-base-card p-4; }
+    .article pre code { @apply bg-transparent p-0 text-ink; }
+    .article img { @apply my-4 rounded-xl border border-base-border; }
+    .article hr { @apply my-8 border-base-border; }
+}

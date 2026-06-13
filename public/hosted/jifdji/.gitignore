@@ -1,0 +1,29 @@
+# ─── Sensitive Files ─────────────────────────────────────────
+.env
+*.pem
+*.key
+*.crt
+ssl/
+
+# ─── Logs ────────────────────────────────────────────────────
+logs/
+*.log
+
+# ─── Uploads (لا ترفع ملفات المستخدمين) ──────────────────────
+uploads/*
+!uploads/.gitkeep
+
+# ─── OS Files ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDE Files ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ─── PHP ─────────────────────────────────────────────────────
+vendor/
+composer.lock

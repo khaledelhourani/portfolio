@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: blog-system
+    runtime: php          # Render يدعم PHP مباشرة
+    plan: free
+
+    # ─── Build Command ────────────────────────────────────────
+    # ينفذ مرة واحدة عند النشر
+    buildCommand: |
+      mkdir -p ssl logs uploads
+      chmod 755 uploads logs
+      # إذا كان ca.pem مضمناً في المشروع، انسخه:
+      # cp ssl/ca.pem ssl/ca.pem
+
+    # ─── Start Command ────────────────────────────────────────
+    startCommand: php -S 0.0.0.0:$PORT -t .
+
+    # ─── Environment Variables ────────────────────────────────
+    # أضف هذه المتغيرات في Render Dashboard → Environment
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: Blog System
+      - key: APP_URL
+        fromService:
+          type: web
+          name: blog-system
+          property: host
+      - key: DB_HOST
+        sync: false    # أدخله يدوياً في Render Dashboard
+      - key: DB_PORT
+        value: "4000"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: DB_NAME
+        value: blog_backend
+      - key: DB_USE_SSL
+        value: "true"
+      - key: DB_SSL_CA
+        value: /opt/render/project/src/ssl/ca.pem
+
+    # ─── Health Check ─────────────────────────────────────────
+    healthCheckPath: /
+
+    # ─── Disk (للـ uploads) ───────────────────────────────────
+    # ملاحظة: Render Free Plan لا يدعم Persistent Disk
+    # استخدم Cloudinary أو AWS S3 للملفات في الإنتاج
+    # disk:
+    #   name: uploads
+    #   mountPath: /opt/render/project/src/uploads
+    #   sizeGB: 1
